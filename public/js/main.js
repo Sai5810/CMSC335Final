@@ -1,1 +1,0 @@
-// This file contains the JavaScript code for client-side functionality.
