@@ -1,8 +1,8 @@
 <script>
-  import SessionList from './components/SessionList.svelte';
-  import SessionForm from './components/SessionForm.svelte';
-  import Stats from './components/Stats.svelte';
-  import Home from './components/Home.svelte';
+  import SessionList from './lib/SessionList.svelte';
+  import SessionForm from './lib/SessionForm.svelte';
+  import Stats from './lib/Stats.svelte';
+  import Home from './lib/Home.svelte';
 
   let activeTab = $state('home');
 </script>
