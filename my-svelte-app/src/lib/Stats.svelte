@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
 
   let stats = null;
-  let chartUrl = '';
+  let cardImages = [];
   let loading = true;
   let error = null;
 
@@ -13,11 +13,12 @@
       if (!statsResponse.ok) throw new Error('Failed to fetch stats');
       stats = await statsResponse.json();
 
-      // Fetch chart URL
-      const chartResponse = await fetch('http://localhost:3000/stats/chart');
-      if (!chartResponse.ok) throw new Error('Failed to fetch chart');
-      const chartData = await chartResponse.json();
-      chartUrl = chartData.chartUrl;
+      // Fetch random cards instead of chart
+      const cardsResponse = await fetch('http://localhost:3000/stats/chart');
+      if (!cardsResponse.ok) throw new Error('Failed to fetch cards');
+      const cardData = await cardsResponse.json();
+      cardImages = cardData.cards.map(c => c.image);
+
     } catch (err) {
       error = err.message;
     } finally {
@@ -81,12 +82,11 @@
       </div>
     </div>
 
-    {#if chartUrl}
-      <div class="chart-container">
-        <h3>Profit/Loss Graph</h3>
-        <img src={chartUrl} alt="Poker Stats Chart" />
-      </div>
-    {/if}
+    <div class="cards-container">
+      {#each cardImages as image}
+        <img src={image} alt="Card" />
+      {/each}
+    </div>
   {/if}
 </div>
 
@@ -123,25 +123,19 @@
   .loss {
     color: red;
   }
-  .tip-card {
-    background-color: var(--secondary-color, #f0f0f0);
-    padding: 20px;
-    border-radius: var(--border-radius, 8px);
-    margin-top: 20px;
-  }
- .tip-card p {
-    font-style: italic;
-  }
-  .chart-container {
+
+  .cards-container {
     margin-top: 30px;
     text-align: center;
   }
-  .chart-container img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+  .cards-container img {
+    width: 80px;
+    margin: 0 5px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
+
   .loading,
   .error {
     margin-top: 10px;

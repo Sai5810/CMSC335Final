@@ -1,6 +1,5 @@
 <script>
   </script>
-  
   <div class="home">
     <header class="hero">
       <h2>Welcome to <span>Poker Tracker</span></h2>

@@ -5,7 +5,7 @@
   let loading = true;
   let error = null;
 
-  // Fetch all sessions
+
   onMount(async () => {
     try {
       const response = await fetch('http://localhost:3000/sessions');
@@ -18,7 +18,7 @@
     }
   });
 
-  // Delete session by ID
+
   async function deleteSession(id) {
     if (confirm('Are you sure you want to delete this session?')) {
       try {
@@ -33,7 +33,7 @@
     }
   }
 
-  // ✅ FIXED: Always display the correct date by forcing UTC interpretation
+
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('en-US', {
       timeZone: 'UTC',

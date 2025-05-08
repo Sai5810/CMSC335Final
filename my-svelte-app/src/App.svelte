@@ -3,6 +3,7 @@
   import SessionForm from './lib/SessionForm.svelte';
   import Stats from './lib/Stats.svelte';
   import Home from './lib/Home.svelte';
+  import './app.css';
 
   let activeTab = $state('home');
 </script>
@@ -48,7 +49,6 @@
 </main>
 
 <style>
-  /* App-specific styles only */
   header {
     display: flex;
     flex-direction: column;
