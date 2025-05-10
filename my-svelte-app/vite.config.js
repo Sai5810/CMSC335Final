@@ -1,6 +1,25 @@
-import { defineConfig } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
+import { defineConfig } from 'vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
   plugins: [svelte()],
-})
+  server: {
+    proxy: {
+      '/stats': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/sessions': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  }
+});

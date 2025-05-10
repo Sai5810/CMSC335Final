@@ -4,7 +4,9 @@
   let sessions = [];
   let loading = true;
   let error = null;
-
+  let sortField = 'date';
+  let sortDirection = 'desc';
+  let deletingId = null;
 
   onMount(async () => {
     try {
@@ -18,10 +20,10 @@
     }
   });
 
-
   async function deleteSession(id) {
     if (confirm('Are you sure you want to delete this session?')) {
       try {
+        deletingId = id;
         const response = await fetch(`http://localhost:3000/sessions/${id}`, {
           method: 'DELETE'
         });
@@ -29,23 +31,59 @@
         sessions = sessions.filter(session => session._id !== id);
       } catch (err) {
         alert(`Error: ${err.message}`);
+      } finally {
+        deletingId = null;
       }
     }
   }
 
-
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      timeZone: 'UTC',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+  function handleSort(field) {
+    if (sortField === field) {
+      sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortField = field;
+      sortDirection = field === 'date' ? 'desc' : 'asc';
+    }
+    
+    sessions = [...sessions].sort((a, b) => {
+      let valA, valB;
+      
+      if (field === 'profit') {
+        valA = a.cashOut - a.buyIn;
+        valB = b.cashOut - b.buyIn;
+      } else if (field === 'hourlyRate') {
+        valA = (a.cashOut - a.buyIn) / a.duration;
+        valB = (b.cashOut - b.buyIn) / b.duration;
+      } else {
+        valA = a[field];
+        valB = b[field];
+      }
+      
+      if (field === 'date') {
+        valA = new Date(valA).getTime();
+        valB = new Date(valB).getTime();
+      }
+      
+      const multiplier = sortDirection === 'asc' ? 1 : -1;
+      return valA > valB ? multiplier : valA < valB ? -multiplier : 0;
     });
   }
 
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
-  }
+  const formatDate = dateString => new Date(dateString).toLocaleDateString('en-US', {
+    timeZone: 'UTC',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+
+  const formatCurrency = amount => new Intl.NumberFormat('en-US', { 
+    style: 'currency', 
+    currency: 'USD' 
+  }).format(amount);
+
+  $: totalProfit = sessions.reduce((sum, s) => sum + (s.cashOut - s.buyIn), 0);
+  $: totalHours = sessions.reduce((sum, s) => sum + s.duration, 0);
+  $: winningGames = sessions.filter(s => s.cashOut > s.buyIn).length;
 </script>
 
 <div class="session-list">
@@ -61,13 +99,21 @@
     <table>
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Location</th>
-          <th>Game</th>
-          <th>Buy-In</th>
-          <th>Cash-Out</th>
-          <th>Profit/Loss</th>
-          <th>Hours</th>
+            {#each [
+              { field: 'date', label: 'Date' },
+              { field: 'location', label: 'Location' },
+              { field: 'gameType', label: 'Game' },
+              { field: 'buyIn', label: 'Buy-In' },
+              { field: 'cashOut', label: 'Cash-Out' },
+              { field: 'profit', label: 'Profit/Loss' },
+              { field: 'duration', label: 'Hours' }
+            ] as column}
+              <th 
+                on:click={() => handleSort(column.field)} 
+                class:sorted={sortField === column.field}>
+                {column.label} {sortField === column.field ? (sortDirection === 'asc' ? '↑' : '↓') : ''}
+              </th>
+            {/each}
           <th>Actions</th>
         </tr>
       </thead>
@@ -84,11 +130,26 @@
             </td>
             <td>{session.duration}</td>
             <td>
-              <button class="delete-btn" on:click={() => deleteSession(session._id)}>Delete</button>
+              <button 
+                class="delete-btn" 
+                on:click={() => deleteSession(session._id)}
+                disabled={deletingId === session._id}>
+                {deletingId === session._id ? 'Deleting...' : 'Delete'}
+              </button>
             </td>
           </tr>
         {/each}
       </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Total: {sessions.length} sessions</td>
+          <td>Win rate: {(winningGames / sessions.length * 100).toFixed(1)}%</td> 
+          <td>Hours: {totalHours}</td>
+          <td class={totalProfit >= 0 ? 'profit' : 'loss'} colspan="3">
+            Total profit: {formatCurrency(totalProfit)}
+          </td>
+        </tr>
+      </tfoot>
     </table>
   {/if}
 </div>
@@ -97,19 +158,37 @@
   table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
   }
 
   th, td {
     padding: 10px;
     border: 1px solid #ddd;
+    text-align: left;
   }
 
-  .profit {
-    color: green;
+  th {
+    cursor: pointer;
+    position: relative;
+    background-color: transparent; 
+    font-weight: bold;
   }
 
-  .loss {
-    color: red;
+  th:hover { 
+    background-color: rgba(0, 0, 0, 0.05); 
+  }
+  
+  .sorted { 
+    background-color: rgba(0, 0, 0, 0.08); 
+  }
+
+  .profit { color: green; }
+  .loss { color: red; }
+  
+  tfoot {
+    font-weight: bold;
+    background-color: transparent; 
+    border-top: 2px solid #ddd; 
   }
 
   .loading, .error {
@@ -126,7 +205,12 @@
     cursor: pointer;
   }
 
-  .delete-btn:hover {
+  .delete-btn:hover:not(:disabled) {
     background-color: darkred;
+  }
+
+  .delete-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 </style>

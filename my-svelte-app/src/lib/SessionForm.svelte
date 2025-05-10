@@ -1,6 +1,4 @@
 <script>
-  import { preventDefault } from 'svelte/legacy';
-
   let date = new Date().toISOString().split('T')[0];
   let location = '';
   let gameType = "No Limit Hold'em";
@@ -65,6 +63,7 @@
     }
   }
 </script>
+<br>
 <div class="session-form">
   <h2>Add New Poker Session</h2>
   {#if success}
@@ -152,8 +151,22 @@
     </button>
   </form>
 </div>
-
 <style>
+  .session-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: black;
+  }
+
   .form-row {
     display: flex;
     gap: 15px;
@@ -164,16 +177,49 @@
   }
 
   .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: black;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: white;
+    color: black;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #076324;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(7, 99, 36, 0.2);
   }
 
   .submit-btn {
-    background-color: var(--primary-color, #007bff);
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 30px auto 0;
+    background-color: #076324;
     color: white;
-    padding: 8px 16px;
+    padding: 12px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background-color: #054e1b;
   }
 
   .submit-btn:disabled {
@@ -182,18 +228,26 @@
   }
 
   .success-message {
-    padding: 10px;
+    padding: 15px;
     background-color: #d4edda;
-    color: #155724;
+    color: black;
+    border-left: 5px solid #155724;
     border-radius: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
   }
 
   .error {
-    padding: 10px;
+    padding: 15px;
     background-color: #f8d7da;
-    color: #721c24;
+    color: black;
+    border-left: 5px solid #721c24;
     border-radius: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+    }
   }
 </style>

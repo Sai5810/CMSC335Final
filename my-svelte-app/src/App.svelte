@@ -6,45 +6,36 @@
   import './app.css';
 
   let activeTab = $state('home');
+  const tabs = [
+    { id: 'home', label: 'Home', component: Home },
+    { id: 'sessions', label: 'Sessions', component: SessionList },
+    { id: 'new', label: 'New Session', component: SessionForm },
+    { id: 'stats', label: 'Statistics', component: Stats }
+  ];
 </script>
 
 <main class="container">
   <header>
     <h1>Poker Tracker</h1>
     <nav>
-      <button 
-        class:active={activeTab === 'home'} 
-        onclick={() => activeTab = 'home'}>
-        Home
-      </button>
-      <button 
-        class:active={activeTab === 'sessions'} 
-        onclick={() => activeTab = 'sessions'}>
-        Sessions
-      </button>
-      <button 
-        class:active={activeTab === 'new'} 
-        onclick={() => activeTab = 'new'}>
-        New Session
-      </button>
-      <button 
-        class:active={activeTab === 'stats'} 
-        onclick={() => activeTab = 'stats'}>
-        Statistics
-      </button>
+      {#each tabs as tab}
+        <button 
+          class:active={activeTab === tab.id} 
+          onclick={() => activeTab = tab.id}>
+          {tab.label}
+        </button>
+      {/each}
     </nav>
   </header>
 
   <div class="content">
-    {#if activeTab === 'home'}
-      <Home />
-    {:else if activeTab === 'sessions'}
-      <SessionList />
-    {:else if activeTab === 'new'}
-      <SessionForm />
-    {:else if activeTab === 'stats'}
-      <Stats />
-    {/if}
+    {#each tabs as tab}
+      {#if activeTab === tab.id}
+        {#if tab.component}
+          <tab.component />
+        {/if}
+      {/if}
+    {/each}
   </div>
 </main>
 
@@ -53,7 +44,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 30px;
   }
   
   nav {

@@ -6,19 +6,17 @@
   let loading = true;
   let error = null;
 
+  // Keep the onMount as is
   onMount(async () => {
     try {
-      // Fetch stats
       const statsResponse = await fetch('http://localhost:3000/stats');
       if (!statsResponse.ok) throw new Error('Failed to fetch stats');
       stats = await statsResponse.json();
 
-      // Fetch random cards instead of chart
       const cardsResponse = await fetch('http://localhost:3000/stats/chart');
       if (!cardsResponse.ok) throw new Error('Failed to fetch cards');
       const cardData = await cardsResponse.json();
       cardImages = cardData.cards.map(c => c.image);
-
     } catch (err) {
       error = err.message;
     } finally {
@@ -26,12 +24,7 @@
     }
   });
 
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  }
+  const formatCurrency = amount => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 </script>
 
 <div class="stats-page">
@@ -45,57 +38,36 @@
     <p>Add sessions to see statistics.</p>
   {:else}
     <div class="stats-grid">
-      <div class="stat-card">
-        <h3>Total Sessions</h3>
-        <div class="stat-value">{stats.totalSessions}</div>
-      </div>
-
-      <div class="stat-card">
-        <h3>Total Profit</h3>
-        <div class="stat-value {stats.totalProfit >= 0 ? 'profit' : 'loss'}">
-          {formatCurrency(stats.totalProfit)}
+      {#each [
+        { title: 'Total Sessions', value: stats.totalSessions },
+        { title: 'Total Profit', value: formatCurrency(stats.totalProfit), class: stats.totalProfit >= 0 ? 'profit' : 'loss' },
+        { title: 'Hourly Rate', value: `${formatCurrency(stats.hourlyRate)}/hr`, class: stats.hourlyRate >= 0 ? 'profit' : 'loss' },
+        { title: 'Win Rate', value: `${stats.winRate.toFixed(1)}%` },
+        { title: 'Total Hours', value: stats.totalHours },
+        { title: 'Winning Sessions', value: `${stats.winningGames} / ${stats.totalSessions}` }
+      ] as stat}
+        <div class="stat-card">
+          <h3>{stat.title}</h3>
+          <div class="stat-value" class:profit={stat.class === 'profit'} class:loss={stat.class === 'loss'}>
+            {stat.value}
+          </div>
         </div>
-      </div>
-
-      <div class="stat-card">
-        <h3>Hourly Rate</h3>
-        <div class="stat-value {stats.hourlyRate >= 0 ? 'profit' : 'loss'}">
-          {formatCurrency(stats.hourlyRate)}/hr
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <h3>Win Rate</h3>
-        <div class="stat-value">
-          {stats.winRate.toFixed(1)}%
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <h3>Total Hours</h3>
-        <div class="stat-value">{stats.totalHours}</div>
-      </div>
-
-      <div class="stat-card">
-        <h3>Winning Sessions</h3>
-        <div class="stat-value">{stats.winningGames} / {stats.totalSessions}</div>
-      </div>
+      {/each}
     </div>
 
     <div class="cards-container">
-      {#each cardImages as image}
-        <img src={image} alt="Card" />
-      {/each}
+      <h3>Your Lucky Board</h3>
+      <div class="hand">
+        {#each cardImages as image}
+          <img src={image} alt="Card" />
+        {/each}
+      </div>
     </div>
   {/if}
 </div>
 
 <style>
-  .stats-page {
-    padding: 20px;
-  }
-
-  .stats-grid {
+  .stats-grid { 
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
@@ -108,37 +80,29 @@
     padding: 20px;
     box-shadow: var(--box-shadow, 0 2px 4px rgba(0,0,0,0.1));
     text-align: center;
+    color: black;
   }
 
-  .stat-value {
-    font-size: 24px;
-    font-weight: bold;
-    margin-top: 10px;
-  }
+  .stat-value { font-size: 24px; font-weight: bold; margin-top: 10px; }
+  .profit { color: green; }
+  .loss { color: red; }
 
-  .profit {
-    color: green;
-  }
-
-  .loss {
-    color: red;
-  }
-
-  .cards-container {
-    margin-top: 30px;
-    text-align: center;
+  .cards-container { margin-top: 30px; text-align: center; }
+  
+  .hand {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .cards-container img {
-    width: 80px;
-    margin: 0 5px;
+    width: 100px;
     border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
   }
-
-  .loading,
-  .error {
-    margin-top: 10px;
-    font-weight: bold;
-  }
+  
+  .cards-container img:hover { transform: translateY(-10px); }
+  .loading, .error { margin-top: 10px; font-weight: bold; }
 </style>
