@@ -48,6 +48,31 @@
   
   nav {
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    background-color: transparent;
+    border-radius: 8px;
+    padding: 5px;
+  }
+
+  button {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+  }
+  
+  button.active {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-color: white;
+    font-weight: 600;
   }
 </style>
