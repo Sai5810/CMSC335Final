@@ -6,7 +6,7 @@ Group Members: Sai Vaka (119701263), Divjot Muchhal (119762035), Anthony Van Rhe
 
 App Description: Track poker sessions and analyze performance metrics.
 
-YouTube Video Link: [Add your YouTube link when ready]
+YouTube Video Link: https://www.youtube.com/watch?v=StscgRlITE8
 
 APIs: Deck of Cards API (https://deckofcardsapi.com/)
 
