@@ -23,18 +23,13 @@
   async function handleSubmit() {
     error = null;
     success = false;
-    if (
-      !location ||
-      buyIn === '' ||
-      cashOut === '' ||
-      duration === ''
-    ) {
+    if (!location || buyIn === '' || cashOut === '' || duration === '') {
       error = 'Please fill in all required fields';
       return;
     }
     loading = true;
     try {
-      const response = await fetch('http://localhost:3000/sessions', {
+      const response = await fetch('/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -63,24 +58,26 @@
     }
   }
 </script>
-<br>
+
+<br />
+
 <div class="session-form">
   <h2>Add New Poker Session</h2>
+
   {#if success}
-    <div class="success-message">
-      Session added successfully!
-    </div>
+    <div class="success-message">Session added successfully!</div>
   {/if}
+
   {#if error}
-    <div class="error">
-      {error}
-    </div>
+    <div class="error">{error}</div>
   {/if}
+
   <form on:submit|preventDefault={handleSubmit}>
     <div class="form-group">
       <label for="date">Date:</label>
       <input type="date" id="date" bind:value={date} required />
     </div>
+
     <div class="form-group">
       <label for="location">Location:</label>
       <input
@@ -91,6 +88,7 @@
         required
       />
     </div>
+
     <div class="form-group">
       <label for="gameType">Game Type:</label>
       <select id="gameType" bind:value={gameType}>
@@ -99,9 +97,10 @@
         {/each}
       </select>
     </div>
+
     <div class="form-row">
       <div class="form-group">
-        <label for="buyIn">Buy-In ($):</label>
+        <label for="buyIn">Buy‑In ($):</label>
         <input
           type="number"
           id="buyIn"
@@ -111,8 +110,9 @@
           required
         />
       </div>
+
       <div class="form-group">
-        <label for="cashOut">Cash-Out ($):</label>
+        <label for="cashOut">Cash‑Out ($):</label>
         <input
           type="number"
           id="cashOut"
@@ -124,7 +124,7 @@
       </div>
 
       <div class="form-group">
-        <label for="duration">Duration (hours):</label>
+        <label for="duration">Duration (hours):</label>
         <input
           type="number"
           id="duration"
@@ -147,10 +147,11 @@
     </div>
 
     <button type="submit" class="submit-btn" disabled={loading}>
-      {loading ? 'Saving...' : 'Save Session'}
+      {loading ? 'Saving…' : 'Save Session'}
     </button>
   </form>
 </div>
+
 <style>
   .session-form {
     max-width: 800px;
@@ -187,7 +188,9 @@
     color: black;
   }
 
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
@@ -197,7 +200,9 @@
     color: black;
   }
 
-  input:focus, select:focus, textarea:focus {
+  input:focus,
+  select:focus,
+  textarea:focus {
     border-color: #076324;
     outline: none;
     box-shadow: 0 0 0 3px rgba(7, 99, 36, 0.2);
@@ -244,6 +249,7 @@
     border-radius: 5px;
     margin-bottom: 20px;
   }
+
   @media (max-width: 768px) {
     .form-row {
       flex-direction: column;

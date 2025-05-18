@@ -6,14 +6,13 @@
   let loading = true;
   let error = null;
 
-  // Keep the onMount as is
   onMount(async () => {
     try {
-      const statsResponse = await fetch('http://localhost:3000/stats');
+      const statsResponse = await fetch('/stats');
       if (!statsResponse.ok) throw new Error('Failed to fetch stats');
       stats = await statsResponse.json();
 
-      const cardsResponse = await fetch('http://localhost:3000/stats/chart');
+      const cardsResponse = await fetch('/stats/chart');
       if (!cardsResponse.ok) throw new Error('Failed to fetch cards');
       const cardData = await cardsResponse.json();
       cardImages = cardData.cards.map(c => c.image);
@@ -24,7 +23,8 @@
     }
   });
 
-  const formatCurrency = amount => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrency = amount =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 </script>
 
 <div class="stats-page">
@@ -48,7 +48,10 @@
       ] as stat}
         <div class="stat-card">
           <h3>{stat.title}</h3>
-          <div class="stat-value" class:profit={stat.class === 'profit'} class:loss={stat.class === 'loss'}>
+          <div
+            class="stat-value"
+            class:profit={stat.class === 'profit'}
+            class:loss={stat.class === 'loss'}>
             {stat.value}
           </div>
         </div>
@@ -67,7 +70,7 @@
 </div>
 
 <style>
-  .stats-grid { 
+  .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
@@ -78,17 +81,28 @@
     background: white;
     border-radius: var(--border-radius, 8px);
     padding: 20px;
-    box-shadow: var(--box-shadow, 0 2px 4px rgba(0,0,0,0.1));
+    box-shadow: var(--box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
     text-align: center;
     color: black;
   }
 
-  .stat-value { font-size: 24px; font-weight: bold; margin-top: 10px; }
-  .profit { color: green; }
-  .loss { color: red; }
+  .stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  .profit {
+    color: green;
+  }
+  .loss {
+    color: red;
+  }
 
-  .cards-container { margin-top: 30px; text-align: center; }
-  
+  .cards-container {
+    margin-top: 30px;
+    text-align: center;
+  }
+
   .hand {
     display: flex;
     justify-content: center;
@@ -99,10 +113,17 @@
   .cards-container img {
     width: 100px;
     border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s;
   }
-  
-  .cards-container img:hover { transform: translateY(-10px); }
-  .loading, .error { margin-top: 10px; font-weight: bold; }
+
+  .cards-container img:hover {
+    transform: translateY(-10px);
+  }
+
+  .loading,
+  .error {
+    margin-top: 10px;
+    font-weight: bold;
+  }
 </style>

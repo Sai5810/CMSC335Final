@@ -10,7 +10,7 @@
 
   onMount(async () => {
     try {
-      const response = await fetch('http://localhost:3000/sessions');
+      const response = await fetch('/sessions');
       if (!response.ok) throw new Error('Failed to fetch sessions');
       sessions = await response.json();
     } catch (err) {
@@ -24,7 +24,8 @@
     if (confirm('Are you sure you want to delete this session?')) {
       try {
         deletingId = id;
-        const response = await fetch(`http://localhost:3000/sessions/${id}`, {
+        // relative URL here as well
+        const response = await fetch(`/sessions/${id}`, {
           method: 'DELETE'
         });
         if (!response.ok) throw new Error('Failed to delete session');
