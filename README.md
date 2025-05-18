@@ -12,4 +12,4 @@ APIs: Deck of Cards API (https://deckofcardsapi.com/)
 
 Contact Email: saivaka07@gmail.com
 
-Deployed App Link: https://cmsc335final-8drs.onrender.com/
+Deployed App Link: [https://cmsc335final-8drs.onrender.com/](https://cmsc335final-6.onrender.com/)
